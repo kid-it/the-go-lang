@@ -15,6 +15,7 @@ func main() {
 			os.Exit(1)
 		}
 		_, err1 := io.Copy(os.Stdout, res.Body)
+		res.Body.Close()
 		if err1 != nil {
 			fmt.Fprint(os.Stderr, err)
 			os.Exit(1)
