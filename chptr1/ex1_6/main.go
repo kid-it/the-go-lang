@@ -28,22 +28,17 @@ import (
 
 //!+main
 
-var palette = []color.Color{color.Black,
-	color.RGBA{0, 0xff, 0, 0xff},
-	color.RGBA{0xff, 0, 0, 0xff},
-	color.RGBA{0, 0, 0xff, 0xff},
-	color.RGBA{0xff, 0xff, 0, 0xff}}
+// var palette = []color.Color{color.Black,
+// 	color.RGBA{0, 0xff, 0, 0xff},
+// 	color.RGBA{0xff, 0, 0, 0xff},
+// 	color.RGBA{0, 0, 0xff, 0xff},
+// 	color.RGBA{0xff, 0xff, 0, 0xff}}
+
+var palette = []color.Color{color.Black}
 
 const (
 	// first color in palette
 	blackIndex = iota // next color in palette
-	greenIndex = iota
-	redIndex   = iota
-	blueIndex  = iota
-	rnd1Index  = iota
-	rnd2Index  = iota
-	rnd3Index  = iota
-	rnd4Index  = iota
 )
 
 func main() {
@@ -79,9 +74,8 @@ func lissajous(out io.Writer) {
 	anim := gif.GIF{LoopCount: nframes}
 	phase := 0.0 // phase difference
 
-	for j := 0; j < 4; j++ {
-		var ra = rand.Uint32() % 250
-		palette = append(palette, color.RGBA{0, uint8(0xff - ra), uint8(ra), 0xff})
+	for j := 0; j < nframes; j++ {
+		palette = append(palette, color.RGBA{uint8(255 - j*3), 0, uint8(j * 3), 0xff})
 	}
 
 	for i := 0; i < nframes; i++ {
@@ -91,7 +85,7 @@ func lissajous(out io.Writer) {
 			x := math.Sin(t)
 			y := math.Sin(t*freq + phase)
 			img.SetColorIndex(size+int(x*size+0.5), size+int(y*size+0.5),
-				1+uint8(i%4))
+				uint8(1+i))
 		}
 		phase += 0.1
 		anim.Delay = append(anim.Delay, delay)
