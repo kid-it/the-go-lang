@@ -25,7 +25,6 @@ func visit(n *html.Node) {
 			}
 		}
 	}
-
 	if n.FirstChild != nil {
 		visit(n.FirstChild)
 	}
