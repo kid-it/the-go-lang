@@ -8,6 +8,8 @@ import (
 	"golang.org/x/net/html"
 )
 
+var hist = make(map[string]int)
+
 func main() {
 	doc, err := html.Parse(os.Stdin)
 	if err != nil {
@@ -15,15 +17,12 @@ func main() {
 		os.Exit(1)
 	}
 	visit(doc)
+	printMap()
 }
 
 func visit(n *html.Node) {
-	if n.Type == html.ElementNode && n.Data == "a" {
-		for _, a := range n.Attr {
-			if a.Key == "href" {
-				fmt.Println(a.Val)
-			}
-		}
+	if n.Type == html.ElementNode {
+		hist[n.Data]++
 	}
 	if n.FirstChild != nil {
 		visit(n.FirstChild)
@@ -32,4 +31,10 @@ func visit(n *html.Node) {
 		visit(n.NextSibling)
 	}
 	return
+}
+
+func printMap() {
+	for key, val := range hist {
+		fmt.Printf("%s, %d\n", key, val)
+	}
 }
