@@ -1,38 +1,57 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	"strings"
+
+	"time"
 
 	"golang.org/x/net/html"
 )
 
+var wordCount int = 0
+var imageCount int = 0
+
+func wordsAndImages(n *html.Node) {
+	switch n.Type {
+	case html.TextNode:
+		input := bufio.NewScanner(strings.NewReader(n.Data))
+		input.Split(bufio.ScanWords)
+		for input.Scan() {
+			wordCount++
+		}
+	case html.ElementNode:
+		if n.Data == "img" {
+			fmt.Println(n.Data)
+			imageCount++
+		}
+	}
+}
+
 func countWordsAndImages(n *html.Node) (words, images int, err error) {
-	fmt.Println(n.Data)
-	fmt.Println(n.Type)
-	for j := range n.Attr {
-		fmt.Println(j)
+	wordsAndImages(n)
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		countWordsAndImages(c)
 	}
-
-	for m := n.FirstChild; m != nil; m = n.NextSibling {
-		words, images, err = countWordsAndImages(m)
-	}
-
-	words = 3
-	images = 4
-
-	return
+	return wordCount, imageCount, nil
 }
 
 func main() {
-	words, images, err := CountWordsAndImages("http://golang.org")
+	start := time.Now()
+	if len(os.Args) != 2 {
+		fmt.Fprintln(os.Stderr, "usage: PROG URL")
+	}
+	words, images, err := CountWordsAndImages(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(words)
-	fmt.Println(images)
-	fmt.Println(err)
+	fmt.Printf("Words: %d Images: %d\n", words, images)
+	fmt.Printf("%.4f elapse\n", time.Since(start).Seconds())
 }
 
 func CountWordsAndImages(url string) (words, images int, err error) {
@@ -40,10 +59,7 @@ func CountWordsAndImages(url string) (words, images int, err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// _, err1 := io.Copy(os.Stdout, resp.Body)
-	// if err1 != nil {
-	// 	log.Fatal(err1)
-	// }
+
 	doc, err := html.Parse(resp.Body)
 	defer resp.Body.Close()
 	if err != nil {
