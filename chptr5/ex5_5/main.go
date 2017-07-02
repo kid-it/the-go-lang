@@ -9,14 +9,27 @@ import (
 )
 
 func countWordsAndImages(n *html.Node) (words, images int, err error) {
-	words = 1
-	images = 3
-	err = nil
+	fmt.Println(n.Data)
+	fmt.Println(n.Type)
+	for j := range n.Attr {
+		fmt.Println(j)
+	}
+
+	for m := n.FirstChild; m != nil; m = n.NextSibling {
+		words, images, err = countWordsAndImages(m)
+	}
+
+	words = 3
+	images = 4
+
 	return
 }
 
 func main() {
-	words, images, err := CountWordsAndImages("http://www.google.com")
+	words, images, err := CountWordsAndImages("http://golang.org")
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println(words)
 	fmt.Println(images)
 	fmt.Println(err)
@@ -27,8 +40,12 @@ func CountWordsAndImages(url string) (words, images int, err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// _, err1 := io.Copy(os.Stdout, resp.Body)
+	// if err1 != nil {
+	// 	log.Fatal(err1)
+	// }
 	doc, err := html.Parse(resp.Body)
-	resp.Body.Close()
+	defer resp.Body.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
