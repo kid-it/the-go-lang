@@ -1,4 +1,4 @@
-package main
+package intset
 
 import (
 	"bytes"
@@ -104,6 +104,7 @@ func (s *IntSet) Remove(x int) error {
 func (s *IntSet) Clear() {
 	s.words = []uint64{}
 }
+
 func main() {
 
 	s := &IntSet{}
