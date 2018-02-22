@@ -11,6 +11,13 @@ type IntSet struct {
 	words []uint64
 }
 
+//return a copy of the intset
+func (s *IntSet) Copy() *IntSet {
+	var n = IntSet{}
+	copy(n.words, s.words)
+	return &n
+}
+
 func (s *IntSet) Add(n int) error {
 	if n < 0 {
 		return errors.New("parameter must be non-negative")

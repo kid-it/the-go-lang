@@ -1,6 +1,7 @@
 package intset
 
 import (
+	"fmt"
 	"math/rand"
 	"os"
 	"testing"
@@ -121,7 +122,36 @@ func TestClear(t *testing.T) {
 	s1.Add(4)
 	s1.Add(56)
 	s1.Clear()
-	if s1.Has(4) || s1.Has(56) {
+	if s1.Has(4) || s1.Has(156) {
 		t.Errorf("set should be cleared")
+	}
+}
+
+func TestCopy(t *testing.T) {
+	s1 := &IntSet{}
+
+	s1.Add(4)
+	s1.Add(156)
+	s := s1.Copy()
+	if s.Has(4) && s.Has(56) {
+		t.Errorf("Expected exact copy of s1")
+	}
+
+	s1.Add(24)
+
+	if s.Has(24) {
+		t.Errorf("s should be a copy, not a copy of the pointer")
+	}
+
+	s1.Remove(56)
+	if s.Has(56) {
+		t.Errorf("s should be a copy, not a copy of the pointer")
+	}
+
+	s.Add(99)
+	if s1.Has(99) {
+		fmt.Println(&s1)
+		fmt.Println(&s)
+		t.Errorf("s should be a copy, not a copy of the pointer")
 	}
 }
