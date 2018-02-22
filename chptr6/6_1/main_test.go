@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"os"
 	"testing"
@@ -118,27 +117,11 @@ func TestLen(t *testing.T) {
 
 func TestClear(t *testing.T) {
 	s1 := &IntSet{}
-	err := s1.Remove(125)
-	if err == nil {
-		t.Errorf("before any adds, should flag error if user tries to clear x > 64")
-	}
 
 	s1.Add(4)
 	s1.Add(56)
-
-	s1.Remove(4)
-	b := s1.Has(4)
-	if b {
-		fmt.Println(s1.words)
-		t.Errorf("value should be cleared")
-	}
-	b = s1.Has(56)
-	if !b {
-		fmt.Println(s1.words)
-		t.Errorf("value should still be in set")
-	}
-
-	if err = s1.Remove(34); err == nil {
-		t.Errorf("Removing a int not in the set should return error")
+	s1.Clear()
+	if s1.Has(4) || s1.Has(56) {
+		t.Errorf("set should be cleared")
 	}
 }

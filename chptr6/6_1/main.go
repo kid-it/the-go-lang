@@ -28,7 +28,7 @@ func (s *IntSet) Add(n int) error {
 
 func (s *IntSet) Has(n int) bool {
 	w := n / 64
-	if w > len(s.words) {
+	if w >= len(s.words) {
 		return false
 	}
 
@@ -101,5 +101,11 @@ func (s *IntSet) Remove(x int) error {
 	return nil
 }
 
+func (s *IntSet) Clear() {
+	s.words = []uint64{}
+}
 func main() {
+
+	s := &IntSet{}
+	s.Has(4)
 }
